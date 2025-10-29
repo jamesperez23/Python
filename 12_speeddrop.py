@@ -4,7 +4,7 @@ import time
 # Initialize Pygame
 pygame.init()
 
-# Screen dimensions 
+# Screen dimensions
 screen_width = 1080
 screen_height = 720
 
@@ -25,8 +25,8 @@ ball_y = screen_height // 2  # Start at the middle vertically
 ball_speed_y = 2  # Vertical speed
 ball_speed_x = 5  # Horizontal speed
 gravity = 0.5  # Gravity effect
-bounce_factor  = -0.85 # Bounce factor (negative to reverse direction)
-min_bounce_speed  = 1 # Threshold to stop bouncing
+bounce_factor = -0.85  # Bounce effect (negative to reverse direction)
+min_bounce_speed = 1  # Threshold to stop bouncing
 
 clock = pygame.time.Clock()
 
@@ -38,16 +38,16 @@ rotation_speed = 10  # Change this value to control how fast the ball rotates
 ball_surface = pygame.Surface((ball_radius * 2, ball_radius * 2), pygame.SRCALPHA)
 pygame.draw.circle(ball_surface, ball_color, (ball_radius, ball_radius), ball_radius)
 # Draw a line to visualize rotation
-pygame.draw.line(ball_surface, (0, 0, 0), (ball_radius, ball_radius), (ball_radius * 2, ball_radius), 4 )
+pygame.draw.line(ball_surface, (0, 0, 0), (ball_radius, ball_radius), (ball_radius * 2, ball_radius), 4)
 
 # Rectangle properties
 rect_width = 60
 rect_height = 30
 rect_color = (0, 128, 0)  # Green
-rectangle = pygame.Rect(screen_width // 3, -20, rect_width, rect_height)  
+rectangle = pygame.Rect(screen_width // 3, -20, rect_width, rect_height)
 rect_speed_y = 0
-rect_gravity_start = 0.5  # Initial drop speed 
-rect_gravity = rect_gravity_start 
+rect_gravity_start = 0.5  # Initial drop speed
+rect_gravity = rect_gravity_start
 rect_alpha = 255
 rect_fading = False
 rect_visible = False
@@ -84,13 +84,13 @@ while running:
     # Prevent the ball from leaving the left edge
     if ball_x - ball_radius < 0:
         ball_x = ball_radius
-    
+
     # Fill the screen with the background color
-    screen.fill (background_color)
+    screen.fill(background_color)
 
     # Rotate the ball surface
-    rotated_ball = pygame.transform.rotate (ball_surface, rotation_angle)
-    rect = rotated_ball.get_rect (center=(ball_x, ball_y))
+    rotated_ball = pygame.transform.rotate(ball_surface, rotation_angle)
+    rect = rotated_ball.get_rect(center=(ball_x, int(ball_y)))
 
     # Draw the rotated ball
     screen.blit(rotated_ball, rect.topleft)
@@ -103,7 +103,7 @@ while running:
     if ball_y + ball_radius >= screen_height:
         if not ball_on_floor:
             ball_on_floor = True
-            ball_floor_time = pygame.time.get_ticks()  
+            ball_floor_time = pygame.time.get_ticks()
         ball_y = screen_height - ball_radius  # Reset position to avoid going below the screen
         ball_speed_y *= bounce_factor
         if abs(ball_speed_y) < min_bounce_speed:
@@ -119,29 +119,31 @@ while running:
             rect_alpha = 255
             rect_fading = False
             rect_visible = True
-            rect_gravity = rect_gravity_start  # Reset gravity for each drop 
-        
-        if rect_visible:
-            if not rect_fading:
-                rect_speed_y += rect_gravity
-                rectangle.y += int(rect_speed_y)
-                if rectangle.y + rect_height >= screen_height:
-                    rectangle.y = screen_height - rect_height
-                    rect_fading = True
-            else:
-                rect_alpha -= 8  # Fade speed
-                if rect_alpha <= 0:
-                    rect_alpha = 0
-                    rect_visible = False  # Hide after fade out
-                    rect_gravity_start += 0.5  # Increase drop speed for next drop 
-            
-            # Draw rectangle with alpha
-            rect_surf = pygame.Surface((rect_width, rect_height), pygame.SRCALPHA)
-            rect_surf.fill((*rect_color, rect_alpha))
-            screen.blit(rect_surf, (rectangle.x, rectangle.y))
+            rect_gravity = rect_gravity_start  # Reset gravity for each drop
 
-        # Update the display
-        pygame.display.update()
+    if rect_visible:
+        if not rect_fading:
+            rect_speed_y += rect_gravity
+            rectangle.y += int(rect_speed_y)
+            if rectangle.y + rect_height >= screen_height:
+                rectangle.y = screen_height - rect_height
+                rect_fading = True
+        else:
+            rect_alpha -= 8  # Fade speed
+            if rect_alpha <= 0:
+                rect_alpha = 0
+                rect_visible = False  # Hide after fade out
+                rect_gravity_start += 0.5  # Increase drop speed for next drop
+
+        # Draw rectangle with alpha
+        rect_surf = pygame.Surface((rect_width, rect_height), pygame.SRCALPHA)
+        rect_surf.fill((*rect_color, rect_alpha))
+        screen.blit(rect_surf, (rectangle.x, rectangle.y))
+
+    # Update the display
+    pygame.display.update()
 
 # Quit Pygame
 pygame.quit()
+
+
